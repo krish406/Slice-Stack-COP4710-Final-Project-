@@ -1,7 +1,13 @@
 Overview of Implementation:
 Basically Load these into a Kanban
 
-One for the employee
+Pages requirement (Task Delegation)
+Menu Management — view, add, edit, delete menu items
+Create Order — your process order page
+Order History — view past orders and line items
+Inventory — view and adjust ingredient stock levels
+
+Basic Requirements
     View Inventory
     View Most Purchased Item
     View Menu
