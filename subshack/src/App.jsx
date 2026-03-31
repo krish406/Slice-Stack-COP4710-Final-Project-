@@ -1,11 +1,10 @@
-import { useEffect, useState } from "react";
-import { NavLink, Route, Routes } from "react-router-dom";
+import { NavLink, Route, Routes, Navigate } from "react-router-dom";
 import { supabase } from "./supabaseClient";
 import "./App.css";
-import CreateOrder from "./assets/CreateOrder";
-import Inventory from "./assets/Inventory";
-import MenuManagement from "./assets/MenuManagement";
-import OrderHistory from "./assets/OrderHistory";
+import CreateOrder from "./pages/CreateOrder";
+import Inventory from "./pages/Inventory";
+import MenuManagement from "./pages/MenuManagement";
+import OrderHistory from "./pages/OrderHistory";
 
 function App() {
   return (
@@ -41,6 +40,10 @@ function App() {
       </header>
 
       <Routes>
+        <Route 
+          path="/" 
+          element={<Navigate to="/create-order" replace />} 
+        />
         <Route
           path="/create-order"
           element={<CreateOrder />}
