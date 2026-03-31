@@ -1,20 +1,22 @@
 Overview of Implementation:
 Basically Load these into a Kanban
 
-Pages requirement (Task Delegation)
+Pages requirement 
 Menu Management — view, add, edit, delete menu items
-Create Order — your process order page
-Order History — view past orders and line items
+Create Order — order on behalf of regular customers
+Order History — view past orders and line items - done by Krish
 Inventory — view and adjust ingredient stock levels
 
-Basic Requirements
-    View Inventory
-    View Most Purchased Item
-    View Menu
-    View Orders
-    Compute Revenue
-    Update Inventory
-    Create a new order
-    
+Overview of Queries
+    Multi-table SELECT — Order History fetch - Done by Krish
+    INSERT — Create Order 
+    UPDATE — Adjust ingredient stock (Inventory page)
+    DELETE — Remove a menu item (Menu Management)
+    Filtered SELECT — Low stock alert (ingredients below reorder level) (Inventory page)
+    Aggregate SELECT — Something like total sales or most ordered item (In progress (Krish))
+    INSERT with FK — Adding a new menu item with ingredients (Menu Management Page)
+    Multi-row INSERT — Order items when creating an order (Create Order Page)
+
+    we will probably use more but the above will satisfy the needs of the project
 
 
