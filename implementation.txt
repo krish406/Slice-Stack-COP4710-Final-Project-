@@ -1,0 +1,18 @@
+Overview of Implementation:
+Basically Load these into a Kanban
+
+Create two separate screens
+One for the customer
+    Create a new order
+    View Menu
+
+One for the employee
+    View Inventory
+    View Most Purchased Item
+    View Menu
+    View Orders
+    Compute Revenue
+    Update Inventory
+    
+
+
