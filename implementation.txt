@@ -8,13 +8,13 @@ Order History — view past orders and line items - done by Krish
 Inventory — view and adjust ingredient stock levels
 
 Overview of Queries
-    Multi-table SELECT — Order History fetch - Done by Krish
+    Multi-table SELECT — Order History fetch - Done 
     INSERT — Create Order 
     UPDATE — Adjust ingredient stock (Inventory page)
-    DELETE — Remove a menu item (Menu Management)
+    DELETE — Remove a menu item (Menu Management) - Done
     Filtered SELECT — Low stock alert (ingredients below reorder level) (Inventory page)
-    Aggregate SELECT — Something like total sales or most ordered item (In progress (Krish))
-    INSERT with FK — Adding a new menu item with ingredients (Menu Management Page)
+    Aggregate SELECT — Something like total sales or most ordered item (Order History Page)
+    INSERT with FK — Adding a new menu item with ingredients (Menu Management Page) - In Progress
     Multi-row INSERT — Order items when creating an order (Create Order Page)
 
     we will probably use more but the above will satisfy the needs of the project

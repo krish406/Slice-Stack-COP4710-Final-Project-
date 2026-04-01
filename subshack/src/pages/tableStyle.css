@@ -29,6 +29,26 @@
   font-weight: 600;
 }
 
+.menubutton {
+  text-align: right;
+  vertical-align: middle;
+}
+
+.menubutton button {
+  padding: 8px 14px;
+  border-style: none;
+  color: white;
+  border-radius: 8px;
+  background: #277d4f;
+  font-weight: 300;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.menubutton button:hover {
+  background: #238a53;
+}
+
 .order-table td {
   padding: 10px 12px;
   vertical-align: top;
@@ -46,4 +66,147 @@
 
 .order-item-line {
   font-size: 14px;
+}
+
+.menu-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(12, 33, 22, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 1000;
+}
+
+.menu-dialog {
+  width: min(520px, 100%);
+  background: #f8f0ce;
+  border: 2px solid #1f5a3b;
+  border-radius: 14px;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  text-align: left;
+}
+
+.menu-dialog h3 {
+  margin: 0 0 14px;
+  color: #1f5a3b;
+}
+
+.menu-dialog-divider {
+  height: 1px;
+  background: rgba(31, 90, 59, 0.25);
+  margin: 16px 0;
+}
+
+.menu-dialog-form {
+  display: grid;
+  gap: 12px;
+}
+
+.menu-dialog-form label {
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+  color: #1f5a3b;
+  font-weight: 600;
+}
+
+.menu-dialog-form input {
+  border: 1px solid #7da88f;
+  border-radius: 8px;
+  padding: 9px 10px;
+  font-size: 14px;
+  color: #10281b;
+  background: #ffffff;
+}
+
+.menu-dialog-form input:focus {
+  outline: 2px solid #2d8a58;
+  outline-offset: 1px;
+}
+
+.menu-dialog-error {
+  margin: 0;
+  color: #9f1d1d;
+  font-size: 14px;
+}
+
+.menu-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.menu-dialog-cancel,
+.menu-dialog-submit,
+.menu-dialog-delete {
+  border: none;
+  border-radius: 8px;
+  padding: 9px 14px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.menu-dialog-cancel {
+  background: #e5e5e5;
+  color: #1f1f1f;
+}
+
+.menu-dialog-submit {
+  background: #1f5a3b;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.menu-dialog-delete {
+  background: #a52929;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.menu-dialog-cancel:disabled,
+.menu-dialog-submit:disabled,
+.menu-dialog-delete:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.mm-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+.mm-edit-btn {
+  padding: 8px 14px;
+  border-style: none;
+  color: white;
+  border-radius: 8px;
+  background: #277d4f;
+  font-weight: 300;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.mm-edit-btn:hover {
+  background: #238a53;
+}
+
+.mm-delete-btn {
+  padding: 8px 14px;
+  border-style: none;
+  color: white;
+  border-radius: 8px;
+  background: #a52929;
+  font-weight: 300;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.mm-delete-btn:hover {
+  background: #8a1f1f;
 }
