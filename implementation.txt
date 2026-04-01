@@ -9,14 +9,24 @@ Inventory — view and adjust ingredient stock levels
 
 Overview of Queries
     Multi-table SELECT — Order History fetch - Done 
-    INSERT — Create Order 
-    UPDATE — Adjust ingredient stock (Inventory page)
-    DELETE — Remove a menu item (Menu Management) - In Progress
-    Filtered SELECT — Low stock alert (ingredients below reorder level) (Inventory page)
-    Aggregate SELECT — Something like total sales or most ordered item (Order History Page)
-    INSERT with FK — Adding a new menu item with ingredients (Menu Management Page) - In Progress
-    Multi-row INSERT — Order items when creating an order (Create Order Page)
+    UPDATE — Adjust ingredient stock (Inventory page) - Assigned to mac
+    DELETE — Remove a menu item (Menu Management) - In Progress (Assigned to Krish)
+    Filtered SELECT — Low stock alert (ingredients below reorder level) (Inventory page) - Assigned to mac
+    Aggregate SELECT — Something like total sales or most ordered item (Order History Page) - Assigned to Tan
+    INSERT with FK — Adding a new menu item with ingredients (Menu Management Page) - In Progress (Assigned to Krish)
+    
+    Multi-row INSERT — Order items when creating an order (Create Order Page) - left for whole team
+    INSERT — Create Order - left for whole team 
 
     we will probably use more but the above will satisfy the needs of the project
 
+    Important Considerations
+        Note that the create orders need to decrease the ingredients (for later)
+        Also there should be something preventing orders from happening if we go below the ingredient threshold for at least one of the order items
+        We DONT need to have create new customer functionality, assume that this is managed by another system
+        The system is manager facing, the manager places orders on behalf of the customer, this way we don't need to make auth and have two separate websites 
+        Try to contain sql queries in one file to make grading easier
 
+    Bonus features??
+        DELETE a specific number of ingredients (not the ingredient as a whole), this allows for removing expired ingredients
+        
