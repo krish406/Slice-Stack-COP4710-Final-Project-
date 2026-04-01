@@ -18,6 +18,12 @@
   text-align: center;
 }
 
+.order-table thead tr:first-child th {
+  background: #1f5a3b;
+  border-bottom: 2px solid white;
+  text-align: center;
+}
+
 .order-table th {
   padding: 10px 12px;
   font-weight: 600;

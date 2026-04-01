@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
-import "./OrderHistory.css";
+import "./tableStyle.css";
 
 const MenuManagement = () => {
   const [menu, setMenu] = useState([]);
@@ -25,9 +25,9 @@ const MenuManagement = () => {
 
   return (
     <div className="order-history">
-      <h2>Menu Management</h2>
       <table className="order-table">
         <thead>
+          <tr><th colSpan={5}>Menu Management</th></tr>
           <tr>
             <th>Item ID</th>
             <th>Name</th>
