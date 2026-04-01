@@ -11,7 +11,7 @@ Overview of Queries
     Multi-table SELECT — Order History fetch - Done 
     INSERT — Create Order 
     UPDATE — Adjust ingredient stock (Inventory page)
-    DELETE — Remove a menu item (Menu Management) - Done
+    DELETE — Remove a menu item (Menu Management) - In Progress
     Filtered SELECT — Low stock alert (ingredients below reorder level) (Inventory page)
     Aggregate SELECT — Something like total sales or most ordered item (Order History Page)
     INSERT with FK — Adding a new menu item with ingredients (Menu Management Page) - In Progress
