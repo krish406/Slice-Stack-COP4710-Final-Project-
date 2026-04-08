@@ -12,26 +12,28 @@ const OrderHistory = () => {
 
   useEffect(() => {
     async function fetchOrders() {
-      const { data, error } = await supabase
-        .from("order")
-        .select(
-          `
-          order_id,
-          order_datetime,
-          total,
-          customer (first_name, last_name),
-          order_item (
-            quantity,
-            unit_price,
-            line_total,
-            menu_item (name)
-          )
-        `,
-        )
-        .order("order_datetime", { ascending: false });
+      const { data, error } = await supabase.rpc("get_order_history");
 
       if (error) console.error(error);
-      else setOrders(data);
+      else {
+        const mappedOrders = (data || []).map((row) => ({
+          order_id: row.order_id,
+          order_datetime: row.order_datetime,
+          total: row.total,
+          customer: {
+            first_name: row.customer_first_name,
+            last_name: row.customer_last_name,
+          },
+          order_item: (row.order_items || []).map((item) => ({
+            quantity: item.quantity,
+            unit_price: item.unit_price,
+            line_total: item.line_total,
+            menu_item: { name: item.item_name },
+          })),
+        }));
+
+        setOrders(mappedOrders);
+      }
       setLoading(false);
     }
 
@@ -40,18 +42,21 @@ const OrderHistory = () => {
       setStatsError(null);
 
       // Aggregate SELECT 1: PostgreSQL SUM via RPC
-      const { data: revenueData, error: revenueError } = await supabase
-        .rpc("get_total_revenue");
+      const { data: revenueData, error: revenueError } =
+        await supabase.rpc("get_total_revenue");
 
       // Aggregate SELECT 2: PostgreSQL GROUP BY + SUM + ORDER BY + LIMIT via RPC
-      const { data: itemData, error: itemError } = await supabase
-        .rpc("get_most_ordered_item");
+      const { data: itemData, error: itemError } = await supabase.rpc(
+        "get_most_ordered_item",
+      );
 
       if (revenueError || itemError) {
         console.error(revenueError || itemError);
         setStatsError("Failed to load statistics.");
       } else {
-        const mostOrderedItem = Array.isArray(itemData) ? itemData[0] : undefined;
+        const mostOrderedItem = Array.isArray(itemData)
+          ? itemData[0]
+          : undefined;
 
         setStats({
           totalRevenue: revenueData ?? 0,
@@ -79,7 +84,10 @@ const OrderHistory = () => {
           <tr>
             <th colSpan={4}>Order History</th>
             <th className="menubutton">
-              <button type="button" onClick={() => setShowStats(true)}>
+              <button
+                type="button"
+                onClick={() => setShowStats(true)}
+              >
                 View Stats
               </button>
             </th>

@@ -183,18 +183,18 @@ const MenuManagement = () => {
   }
 
   async function insertMenuItemIngredients(itemId, ingredientRows) {
-  const rowsToInsert = ingredientRows.map((row) => ({
-    ingredient_id: row.ingredient_id,
-    item_id: itemId,
-    quantity: row.quantity,
-  }));
+    const rowsToInsert = ingredientRows.map((row) => ({
+      ingredient_id: row.ingredient_id,
+      item_id: itemId,
+      quantity: row.quantity,
+    }));
 
-  const { error } = await supabase
-    .from("menu_item_ingredient")
-    .insert(rowsToInsert);
+    const { error } = await supabase
+      .from("menu_item_ingredient")
+      .insert(rowsToInsert);
 
-  return error || null;
-}
+    return error || null;
+  }
 
   async function upsertMenuItemIngredients(itemId, ingredientRows) {
     const { error: deleteChildrenError } = await supabase
@@ -242,9 +242,9 @@ const MenuManagement = () => {
 
     if (!error && createdItem?.item_id) {
       const ingredientError = await insertMenuItemIngredients(
-      createdItem.item_id,
-      normalizedIngredientRows,
-    );
+        createdItem.item_id,
+        normalizedIngredientRows,
+      );
       if (ingredientError) {
         setSubmitting(false);
         return setFormError(
@@ -273,27 +273,13 @@ const MenuManagement = () => {
       return setFormError(ingredientValidationError);
 
     setSubmitting(true);
-    const { error } = await supabase
-      .from("menu_item")
-      .update({
-        name: form.name.trim(),
-        description: form.description.trim() || null,
-        price: parsedPrice,
-      })
-      .eq("item_id", editingItem.item_id);
-
-    if (!error) {
-      const ingredientError = await upsertMenuItemIngredients(
-        editingItem.item_id,
-        normalizedIngredientRows,
-      );
-      if (ingredientError) {
-        setSubmitting(false);
-        return setFormError(
-          ingredientError.message || "Unable to update menu item ingredients.",
-        );
-      }
-    }
+    const { error } = await supabase.rpc("update_menu_item_with_ingredients", {
+      p_item_id: editingItem.item_id,
+      p_name: form.name.trim(),
+      p_description: form.description.trim() || null,
+      p_price: parsedPrice,
+      p_ingredients: normalizedIngredientRows,
+    });
 
     setSubmitting(false);
 
@@ -304,22 +290,9 @@ const MenuManagement = () => {
 
   async function handleDelete(item) {
     if (!window.confirm(`Delete "${item.name}"?`)) return;
-    const { error: childDeleteError } = await supabase
-      .from("menu_item_ingredient")
-      .delete()
-      .eq("item_id", item.item_id);
-
-    if (childDeleteError) {
-      alert(
-        childDeleteError.message || "Unable to delete menu item ingredients.",
-      );
-      return;
-    }
-
-    const { error } = await supabase
-      .from("menu_item")
-      .delete()
-      .eq("item_id", item.item_id);
+    const { error } = await supabase.rpc("delete_menu_item_with_ingredients", {
+      p_item_id: item.item_id,
+    });
     if (error) alert(error.message || "Unable to delete item.");
     else await fetchMenu();
   }
