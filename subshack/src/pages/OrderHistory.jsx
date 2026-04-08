@@ -51,11 +51,13 @@ const OrderHistory = () => {
         console.error(revenueError || itemError);
         setStatsError("Failed to load statistics.");
       } else {
+        const mostOrderedItem = Array.isArray(itemData) ? itemData[0] : undefined;
+
         setStats({
           totalRevenue: revenueData ?? 0,
           mostOrdered: {
-            name: itemData[0]?.item_name ?? "—",
-            count: itemData[0]?.total_quantity ?? 0,
+            name: mostOrderedItem?.item_name ?? "—",
+            count: mostOrderedItem?.total_quantity ?? 0,
           },
         });
       }
