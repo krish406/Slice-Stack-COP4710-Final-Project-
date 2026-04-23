@@ -1,0 +1,298 @@
+.inventory-page {
+  padding: 24px;
+}
+
+.inv-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.inv-header h2 {
+  margin: 0 0 8px;
+  color: #1f5a3b;
+}
+
+.inv-header p {
+  margin: 0;
+  color: #666;
+}
+
+.inv-top-actions {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.inv-open-btn {
+  background: #1f5a3b;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.inv-open-btn:hover {
+  opacity: 0.95;
+}
+
+.inv-page-error {
+  color: #c0392b;
+  background: #fff2f2;
+  border: 1px solid #f1c8c8;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+}
+
+.inv-loading {
+  text-align: center;
+  color: #555;
+  padding: 28px 0;
+}
+
+.inv-table-wrap {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  border: 1px solid #ececec;
+}
+
+.inv-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.inv-table thead {
+  background: #f6faf7;
+}
+
+.inv-table th,
+.inv-table td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid #ececec;
+}
+
+.inv-table th {
+  color: #1f5a3b;
+  font-size: 14px;
+}
+
+.inv-table td {
+  font-size: 14px;
+  color: #333;
+}
+
+.inv-low-row {
+  background: #fff8f2;
+}
+
+.inv-status-good {
+  display: inline-block;
+  background: #eef8f1;
+  color: #1f5a3b;
+  border: 1px solid #cfe7d5;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.inv-status-low {
+  display: inline-block;
+  background: #fff2f2;
+  color: #c0392b;
+  border: 1px solid #f1c8c8;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.inv-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 999;
+}
+
+.inv-modal {
+  width: 100%;
+  max-width: 620px;
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+}
+
+.inv-modal-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.inv-modal-top h3 {
+  margin: 0 0 6px;
+  color: #1f5a3b;
+}
+
+.inv-modal-top p {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.inv-close-btn {
+  border: none;
+  background: transparent;
+  font-size: 28px;
+  cursor: pointer;
+  line-height: 1;
+  color: #444;
+}
+
+.inv-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.inv-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.inv-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.inv-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #333;
+}
+
+.inv-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d4d4d4;
+  border-radius: 10px;
+  font-size: 14px;
+  background: white;
+  box-sizing: border-box;
+}
+
+.inv-input:focus {
+  outline: none;
+  border-color: #1f5a3b;
+}
+
+.inv-preview-box {
+  background: #f7faf8;
+  border: 1px solid #dfeae3;
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.inv-preview-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 0;
+}
+
+.inv-preview-row span {
+  color: #555;
+}
+
+.inv-preview-row strong {
+  color: #1f5a3b;
+}
+
+.inv-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.inv-cancel-btn {
+  background: #f2f2f2;
+  color: #333;
+  border: none;
+  padding: 11px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.inv-save-btn {
+  background: #1f5a3b;
+  color: white;
+  border: none;
+  padding: 11px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.inv-save-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.inv-error {
+  color: #c0392b;
+  background: #fff2f2;
+  border: 1px solid #f1c8c8;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 14px;
+}
+
+.inv-success {
+  color: #1f5a3b;
+  background: #eef8f1;
+  border: 1px solid #cfe7d5;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 14px;
+}
+
+@media (max-width: 700px) {
+  .inv-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .inv-actions {
+    flex-direction: column;
+  }
+
+  .inv-cancel-btn,
+  .inv-save-btn,
+  .inv-open-btn {
+    width: 100%;
+  }
+
+  .inv-table-wrap {
+    overflow-x: auto;
+  }
+
+  .inv-table {
+    min-width: 700px;
+  }
+}
