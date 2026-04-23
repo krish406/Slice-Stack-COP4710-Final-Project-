@@ -80,7 +80,7 @@
 }
 
 .menu-dialog {
-  width: min(980px, 96vw);
+  width: min(520px, 100%);
   max-height: 90vh;
   overflow-y: auto;
   background: #f8f0ce;
