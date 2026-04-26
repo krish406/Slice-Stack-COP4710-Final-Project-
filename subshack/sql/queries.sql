@@ -91,3 +91,41 @@ BEGIN
   WHERE item_id = p_item_id;
 END;
 $$ LANGUAGE plpgsql;
+
+--1. Get all customers
+SELECT customer_id, first_name, last_name
+FROM customer
+ORDER BY first_name ASC;
+
+--2. Get all menu items
+SELECT item_id, name, description, price
+FROM menu_item
+ORDER BY name ASC;
+
+--3. Get all ingredients
+SELECT ingredient_id, name, unit, quantity_on_hand, reorder_level, cost_per_unit
+FROM ingredient
+ORDER BY name ASC;
+
+--4. Insert a new order
+INSERT INTO "order" (customer_id, order_datetime, total)
+VALUES (1, NOW(), 25.50)
+RETURNING *;
+
+--5. Insert order items
+INSERT INTO order_item (order_id, item_id, quantity, unit_price, line_total)
+VALUES (1, 2, 3, 8.50, 25.50);
+
+--6. Update inventory
+UPDATE ingredient
+SET quantity_on_hand = 50
+WHERE ingredient_id = 1;
+
+--7. Low stock alert
+SELECT *
+FROM ingredient
+WHERE quantity_on_hand <= reorder_level;
+
+--8. Total sales
+SELECT SUM(total) AS total_sales
+FROM "order";

@@ -1,162 +1,288 @@
-.create-order {
+.create-order-page {
   padding: 24px;
 }
 
-.create-order h2 {
-  margin-bottom: 20px;
+.co-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.co-header h2 {
+  margin: 0 0 8px;
   color: #1f5a3b;
 }
 
-.co-error {
-  color: #c0392b;
-  margin-bottom: 12px;
+.co-header p {
+  margin: 0;
+  color: #666;
 }
 
-.co-success {
-  color: #1f5a3b;
+.co-launch-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.co-open-btn {
+  background: #1f5a3b;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 10px;
+  cursor: pointer;
   font-weight: 600;
-  margin-bottom: 12px;
+  font-size: 15px;
 }
 
-.co-warnings {
-  background: #fff8e1;
-  border-left: 4px solid #f5d56d;
-  padding: 12px 16px;
-  margin-bottom: 16px;
-  border-radius: 4px;
+.co-open-btn:hover {
+  opacity: 0.95;
 }
 
-.co-warnings p {
-  margin: 4px 0;
+.co-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 999;
+}
+
+.co-modal {
+  background: #fff;
+  width: 100%;
+  max-width: 950px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+}
+
+.co-modal-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.co-modal-top h3 {
+  margin: 0 0 6px;
+  color: #1f5a3b;
+}
+
+.co-modal-top p {
+  margin: 0;
+  color: #666;
   font-size: 14px;
+}
+
+.co-close-btn {
+  border: none;
+  background: transparent;
+  font-size: 28px;
+  cursor: pointer;
+  line-height: 1;
+  color: #444;
 }
 
 .co-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  max-width: 600px;
+  gap: 18px;
 }
 
-.co-field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+.co-section {
+  border: 1px solid #e8e8e8;
+  border-radius: 14px;
+  padding: 18px;
+  background: #fafafa;
 }
 
-.co-field label {
+.co-section h4 {
+  margin: 0 0 14px;
+  color: #1f5a3b;
+}
+
+.co-label {
+  display: block;
+  font-size: 13px;
   font-weight: 600;
-  font-size: 14px;
+  margin-bottom: 6px;
   color: #333;
 }
 
-.co-field select,
-.co-field input {
-  padding: 8px 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+.co-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d4d4d4;
+  border-radius: 10px;
   font-size: 14px;
+  background: white;
+  box-sizing: border-box;
 }
 
-.co-item-row {
-  flex-direction: row;
-  align-items: flex-end;
+.co-input:focus {
+  outline: none;
+  border-color: #1f5a3b;
+}
+
+.co-customer-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.co-full-width {
+  grid-column: 1 / -1;
+}
+
+.co-items-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
   gap: 12px;
 }
 
-.co-item-row > div {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.co-item-row select {
-  width: 300px;
-}
-
-.co-item-row input {
-  width: 60px;
-}
-
 .co-add-btn {
-  padding: 8px 16px;
   background: #1f5a3b;
   color: white;
   border: none;
-  border-radius: 6px;
+  padding: 10px 14px;
+  border-radius: 10px;
   cursor: pointer;
-  font-size: 14px;
-  height: 36px;
+  font-weight: 600;
 }
 
-.co-add-btn:hover {
-  background: #174d32;
-}
-
-.co-cart {
-  margin-top: 28px;
-  max-width: 650px;
-}
-
-.co-cart h3 {
+.co-item-row {
+  border: 1px solid #ececec;
+  border-radius: 12px;
+  background: white;
+  padding: 14px;
   margin-bottom: 12px;
-  color: #1f5a3b;
 }
 
-.co-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.co-table thead tr {
-  background: #1f5a3b;
-  color: white;
-  text-align: left;
-}
-
-.co-table th,
-.co-table td {
-  padding: 10px 12px;
-}
-
-.co-table tbody tr {
-  border-bottom: 1px solid rgba(0,0,0,0.08);
-  background: rgba(255,255,255,0.5);
+.co-item-main {
+  display: grid;
+  grid-template-columns: 2fr 110px 140px 140px;
+  gap: 12px;
+  align-items: end;
 }
 
 .co-remove-btn {
-  background: transparent;
-  border: none;
+  margin-top: 12px;
+  background: #fff3f3;
   color: #c0392b;
+  border: 1px solid #f0c8c4;
+  padding: 8px 12px;
+  border-radius: 10px;
   cursor: pointer;
-  font-size: 14px;
+  font-weight: 600;
 }
 
-.co-total {
-  text-align: right;
-  font-size: 18px;
-  font-weight: 700;
-  margin: 12px 0;
+.co-summary {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.co-total-box {
+  min-width: 220px;
+  background: #f3f8f5;
+  border: 1px solid #dbe9df;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.co-total-box span {
+  color: #444;
+}
+
+.co-total-box strong {
   color: #1f5a3b;
+  font-size: 18px;
+}
+
+.co-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.co-cancel-btn {
+  background: #f2f2f2;
+  color: #333;
+  border: none;
+  padding: 11px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
 }
 
 .co-submit-btn {
-  width: 100%;
-  padding: 12px;
   background: #1f5a3b;
   color: white;
   border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  font-weight: 600;
+  padding: 11px 18px;
+  border-radius: 10px;
   cursor: pointer;
-}
-
-.co-submit-btn:hover:not(:disabled) {
-  background: #174d32;
+  font-weight: 600;
 }
 
 .co-submit-btn:disabled {
-  opacity: 0.6;
+  opacity: 0.7;
   cursor: not-allowed;
+}
+
+.co-error {
+  color: #c0392b;
+  background: #fff2f2;
+  border: 1px solid #f1c8c8;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 14px;
+}
+
+.co-success {
+  color: #1f5a3b;
+  background: #eef8f1;
+  border: 1px solid #cfe7d5;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 14px;
+}
+
+.co-loading {
+  padding: 18px 0;
+  color: #555;
+}
+
+@media (max-width: 900px) {
+  .co-item-main {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .co-customer-grid,
+  .co-item-main {
+    grid-template-columns: 1fr;
+  }
+
+  .co-actions {
+    flex-direction: column;
+  }
+
+  .co-submit-btn,
+  .co-cancel-btn,
+  .co-add-btn,
+  .co-open-btn {
+    width: 100%;
+  }
 }

@@ -81,8 +81,6 @@
 
 .menu-dialog {
   width: min(520px, 100%);
-  max-height: 90vh;
-  overflow-y: auto;
   background: #f8f0ce;
   border: 2px solid #1f5a3b;
   border-radius: 14px;
@@ -127,89 +125,6 @@
 .menu-dialog-form input:focus {
   outline: 2px solid #2d8a58;
   outline-offset: 1px;
-}
-
-.menu-dialog-form select {
-  border: 1px solid #7da88f;
-  border-radius: 8px;
-  padding: 9px 10px;
-  font-size: 14px;
-  color: #10281b;
-  background: #ffffff;
-}
-
-.menu-dialog-form select:focus {
-  outline: 2px solid #2d8a58;
-  outline-offset: 1px;
-}
-
-.menu-ingredient-section {
-  display: grid;
-  gap: 8px;
-}
-
-.menu-ingredient-title {
-  margin: 0;
-  font-size: 14px;
-  color: #1f5a3b;
-  font-weight: 600;
-}
-
-.menu-ingredient-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 10px;
-}
-
-.menu-ingredient-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 90px auto;
-  gap: 8px;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.55);
-  border: 1px solid rgba(31, 90, 59, 0.25);
-  border-radius: 10px;
-  padding: 8px;
-}
-
-.menu-ingredient-add,
-.menu-ingredient-remove {
-  border: none;
-  border-radius: 8px;
-  padding: 8px 12px;
-  font-size: 13px;
-  cursor: pointer;
-}
-
-.menu-ingredient-add {
-  justify-self: start;
-  background: #277d4f;
-  color: #ffffff;
-}
-
-.menu-ingredient-remove {
-  background: #e5e5e5;
-  color: #1f1f1f;
-}
-
-.menu-ingredient-add:disabled,
-.menu-ingredient-remove:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-@media (max-width: 760px) {
-  .menu-dialog {
-    width: min(560px, 96vw);
-  }
-
-  .menu-ingredient-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .menu-ingredient-row {
-    grid-template-columns: minmax(0, 1fr);
-  }
 }
 
 .menu-dialog-error {
@@ -294,53 +209,4 @@
 
 .mm-delete-btn:hover {
   background: #8a1f1f;
-}
-
-/* ── Order Statistics Modal ─────────────────────────────────── */
-
-.stats-content {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.stat-item {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 8px 0;
-}
-
-.stat-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #4a7c5f;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.stat-value {
-  font-size: 26px;
-  font-weight: 700;
-  color: #1f5a3b;
-}
-
-.stat-subvalue {
-  font-size: 13px;
-  color: #6b8f7a;
-}
-
-.dialog-close-btn {
-  padding: 8px 20px;
-  background: #1f5a3b;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.dialog-close-btn:hover {
-  background: #174d32;
 }
