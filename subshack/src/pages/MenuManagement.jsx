@@ -24,9 +24,7 @@ const MenuManagement = () => {
 
   async function fetchMenu() {
     const { data, error } = await supabase
-      .from("menu_item")
-      .select("item_id, name, description, price")
-      .order("item_id", { ascending: true });
+      .from("menu_item").select("...").eq("is_active", true).order("item_id", { ascending: true });
     if (error) console.error(error);
     else setMenu(data);
   }

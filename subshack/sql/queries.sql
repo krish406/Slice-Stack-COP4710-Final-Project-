@@ -8,7 +8,7 @@ $$ LANGUAGE sql STABLE;
 CREATE OR REPLACE FUNCTION get_most_ordered_item()
 RETURNS TABLE(item_name text, total_quantity bigint) AS $$
   SELECT mi.name AS item_name,
-        SUM(oi.quantity) AS total_quantity
+         SUM(oi.quantity) AS total_quantity
   FROM order_item oi
   JOIN menu_item mi ON mi.item_id = oi.item_id
   GROUP BY mi.name
@@ -133,18 +133,22 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Function 8: Returns all customers with their total order count
-CREATE OR REPLACE FUNCTION get_customers_with_order_count()
-RETURNS TABLE(customer_id integer, first_name text, last_name text, order_count bigint) AS $$
-  SELECT
-    c.customer_id,
-    c.first_name,
-    c.last_name,
-    COUNT(o.order_id) AS order_count
-  FROM customer c
-  LEFT JOIN "order" o ON o.customer_id = c.customer_id
-  GROUP BY c.customer_id, c.first_name, c.last_name
-  ORDER BY c.first_name ASC;
-$$ LANGUAGE sql STABLE;
+-- Function 8: Deducts inventory for a completed order
+CREATE OR REPLACE FUNCTION deduct_inventory_for_order(
+  p_deductions jsonb
+)
+RETURNS void AS $$
+BEGIN
+  UPDATE ingredient i
+  SET quantity_on_hand = i.quantity_on_hand - d.amount_needed
+  FROM (
+    SELECT
+      (elem ->> 'ingredient_id')::integer AS ingredient_id,
+      (elem ->> 'amount_needed')::numeric AS amount_needed
+    FROM jsonb_array_elements(p_deductions) AS elem
+  ) AS d
+  WHERE i.ingredient_id = d.ingredient_id;
+END;
+$$ LANGUAGE plpgsql;
 
 

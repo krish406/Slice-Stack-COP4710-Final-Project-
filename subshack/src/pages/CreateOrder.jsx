@@ -33,11 +33,12 @@ export default function CreateOrder() {
       setError("");
 
       const [customersRes, menuRes] = await Promise.all([
-        supabase.rpc("get_customers_with_order_count"),
         supabase
-          .from("menu_item")
-          .select("item_id, name, description, price")
-          .order("name", { ascending: true }),
+          .from("customer")
+          .select("customer_id, first_name, last_name")
+          .order("first_name", { ascending: true }),
+          
+          supabase.from("menu_item").select("...").eq("is_active", true)
       ]);
 
       if (customersRes.error) throw customersRes.error;
@@ -58,7 +59,9 @@ export default function CreateOrder() {
 
   function handleItemChange(index, field, value) {
     setOrderItems((prev) =>
-      prev.map((line, i) => (i === index ? { ...line, [field]: value } : line)),
+      prev.map((line, i) =>
+        i === index ? { ...line, [field]: value } : line
+      )
     );
   }
 
@@ -120,7 +123,7 @@ export default function CreateOrder() {
       }
 
       const validLines = computedLines.filter(
-        (line) => line.item_id && line.quantity > 0,
+        (line) => line.item_id && line.quantity > 0
       );
 
       if (validLines.length === 0) {
@@ -132,39 +135,130 @@ export default function CreateOrder() {
         throw new Error("One or more selected menu items are invalid.");
       }
 
-      const itemsPayload = validLines.map((line) => ({
+      /*
+        THEORY:
+        menu_item_ingredient is the recipe table.
+
+        Example:
+        Turkey Sub needs:
+        - Bread: 1
+        - Turkey: 4
+        - Cheese: 2
+
+        If customer orders 3 Turkey Subs:
+        Bread used = 1 * 3
+        Turkey used = 4 * 3
+        Cheese used = 2 * 3
+      */
+
+      const itemIds = validLines.map((line) => Number(line.item_id));
+
+      const recipeRes = await supabase
+        .from("menu_item_ingredient")
+        .select(
+          `
+          item_id,
+          ingredient_id,
+          quantity,
+          ingredient (
+            ingredient_id,
+            name,
+            quantity_on_hand
+          )
+        `
+        )
+        .in("item_id", itemIds);
+
+      if (recipeRes.error) throw recipeRes.error;
+
+      const recipeRows = recipeRes.data || [];
+
+      if (recipeRows.length === 0) {
+        throw new Error(
+          "No recipe ingredients found for the selected menu items."
+        );
+      }
+
+      const ingredientUsage = {};
+
+      validLines.forEach((line) => {
+        const recipeForItem = recipeRows.filter(
+          (recipe) => Number(recipe.item_id) === Number(line.item_id)
+        );
+
+        recipeForItem.forEach((recipe) => {
+          const ingredientId = recipe.ingredient_id;
+          const amountNeeded = Number(recipe.quantity) * Number(line.quantity);
+          const currentStock = Number(recipe.ingredient?.quantity_on_hand || 0);
+
+          if (!ingredientUsage[ingredientId]) {
+            ingredientUsage[ingredientId] = {
+              ingredient_id: ingredientId,
+              name: recipe.ingredient?.name || "Unknown ingredient",
+              current_stock: currentStock,
+              amount_needed: 0,
+            };
+          }
+
+          ingredientUsage[ingredientId].amount_needed += amountNeeded;
+        });
+      });
+
+      const notEnoughStock = Object.values(ingredientUsage).find(
+        (ingredient) => ingredient.current_stock < ingredient.amount_needed
+      );
+
+      if (notEnoughStock) {
+        throw new Error(
+          `Not enough ${notEnoughStock.name}. Needed ${notEnoughStock.amount_needed}, but only ${notEnoughStock.current_stock} available.`
+        );
+      }
+
+      const orderPayload = {
+        customer_id: Number(selectedCustomerId),
+        order_datetime: new Date().toISOString(),
+        total: Number(orderTotal.toFixed(2)),
+      };
+
+      const orderInsert = await supabase
+        .from("order")
+        .insert([orderPayload])
+        .select()
+        .single();
+
+      if (orderInsert.error) throw orderInsert.error;
+
+      const newOrder = orderInsert.data;
+
+      const orderItemPayload = validLines.map((line) => ({
+        order_id: newOrder.order_id,
         item_id: Number(line.item_id),
         quantity: Number(line.quantity),
         unit_price: Number(line.unitPrice.toFixed(2)),
         line_total: Number(line.lineTotal.toFixed(2)),
       }));
 
-      // Check feasibility first for friendly error messages
-      const { data: shortfalls, error: feasibilityError } = await supabase.rpc(
-        "check_order_feasibility",
-        { p_items: itemsPayload },
-      );
+      const orderItemsInsert = await supabase
+        .from("order_item")
+        .insert(orderItemPayload);
 
-      if (feasibilityError) throw feasibilityError;
+      if (orderItemsInsert.error) throw orderItemsInsert.error;
 
-      if (shortfalls && shortfalls.length > 0) {
-        const shortfallMsg = shortfalls
-          .map((s) => `${s.ingredient_name} (need ${s.required}, have ${s.available})`)
-          .join(", ");
-        throw new Error(`Insufficient stock: ${shortfallMsg}`);
+      for (const ingredient of Object.values(ingredientUsage)) {
+        const updatedQuantity =
+          ingredient.current_stock - ingredient.amount_needed;
+
+        const inventoryUpdate = await supabase
+          .from("ingredient")
+          .update({
+            quantity_on_hand: updatedQuantity,
+          })
+          .eq("ingredient_id", ingredient.ingredient_id);
+
+        if (inventoryUpdate.error) throw inventoryUpdate.error;
       }
 
-      // Create order atomically
-      const { error } = await supabase.rpc("create_order_with_items", {
-        p_customer_id: Number(selectedCustomerId),
-        p_order_datetime: new Date().toISOString(),
-        p_total: Number(orderTotal.toFixed(2)),
-        p_items: itemsPayload,
-      });
-
-      if (error) throw error;
-
-      setSuccess("Order created successfully.");
+      setSuccess("Order created successfully and inventory updated.");
 
       setTimeout(() => {
         closeModal();
@@ -184,37 +278,23 @@ export default function CreateOrder() {
       </div>
 
       <div className="co-launch-wrap">
-        <button
-          className="co-open-btn"
-          onClick={() => setShowModal(true)}
-        >
+        <button className="co-open-btn" onClick={() => setShowModal(true)}>
           Open Create Order
         </button>
       </div>
 
       {showModal && (
-        <div
-          className="co-modal-overlay"
-          onClick={closeModal}
-        >
-          <div
-            className="co-modal"
-            onClick={(e) => e.stopPropagation()}
-          >
+        <div className="co-modal-overlay" onClick={closeModal}>
+          <div className="co-modal" onClick={(e) => e.stopPropagation()}>
             <div className="co-modal-top">
               <div>
                 <h3>New Order</h3>
                 <p>Select a customer and add menu items.</p>
               </div>
-              <button
-                className="dialog-close-btn"
-                onClick={closeModal}
-              >
+              <button className="co-close-btn" onClick={closeModal}>
                 ×
               </button>
             </div>
-
-            <div className="menu-dialog-divider" />
 
             {error && <div className="co-error">{error}</div>}
             {success && <div className="co-success">{success}</div>}
@@ -222,10 +302,7 @@ export default function CreateOrder() {
             {loadingData ? (
               <div className="co-loading">Loading customers and menu...</div>
             ) : (
-              <form
-                className="co-form"
-                onSubmit={handleSubmit}
-              >
+              <form className="co-form" onSubmit={handleSubmit}>
                 <div className="co-section">
                   <h4>Customer</h4>
 
@@ -260,10 +337,7 @@ export default function CreateOrder() {
                   </div>
 
                   {computedLines.map((line, index) => (
-                    <div
-                      className="co-item-row"
-                      key={index}
-                    >
+                    <div className="co-item-row" key={index}>
                       <div className="co-item-main">
                         <div className="co-item-name">
                           <label className="co-label">Menu Item</label>
@@ -271,15 +345,16 @@ export default function CreateOrder() {
                             className="co-input"
                             value={line.item_id}
                             onChange={(e) =>
-                              handleItemChange(index, "item_id", e.target.value)
+                              handleItemChange(
+                                index,
+                                "item_id",
+                                e.target.value
+                              )
                             }
                           >
                             <option value="">Choose item</option>
                             {menuItems.map((item) => (
-                              <option
-                                key={item.item_id}
-                                value={item.item_id}
-                              >
+                              <option key={item.item_id} value={item.item_id}>
                                 {item.name} (${Number(item.price).toFixed(2)})
                               </option>
                             ))}
@@ -297,7 +372,7 @@ export default function CreateOrder() {
                               handleItemChange(
                                 index,
                                 "quantity",
-                                e.target.value,
+                                e.target.value
                               )
                             }
                           />
