@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../supabaseClient";
+import "./tableStyle.css";
+import "./OrderHistory.css";
 import "./Inventory.css";
 
 export default function Inventory() {
@@ -7,6 +9,7 @@ export default function Inventory() {
   const [loading, setLoading] = useState(true);
   const [pageError, setPageError] = useState("");
 
+  //adjust ingredients default values
   const [showModal, setShowModal] = useState(false);
   const [selectedIngredientId, setSelectedIngredientId] = useState("");
   const [adjustType, setAdjustType] = useState("increase");
@@ -20,6 +23,7 @@ export default function Inventory() {
     fetchIngredients();
   }, []);
 
+  //get all ingredients to display in table on page load
   async function fetchIngredients() {
     try {
       setLoading(true);
@@ -28,7 +32,7 @@ export default function Inventory() {
       const { data, error } = await supabase
         .from("ingredient")
         .select(
-          "ingredient_id, name, unit, quantity_on_hand, reorder_level, cost_per_unit"
+          "ingredient_id, name, unit, quantity_on_hand, reorder_level, cost_per_unit",
         )
         .order("name", { ascending: true });
 
@@ -44,7 +48,7 @@ export default function Inventory() {
 
   const selectedIngredient = useMemo(() => {
     return ingredients.find(
-      (item) => String(item.ingredient_id) === String(selectedIngredientId)
+      (item) => String(item.ingredient_id) === String(selectedIngredientId),
     );
   }, [ingredients, selectedIngredientId]);
 
@@ -119,10 +123,10 @@ export default function Inventory() {
         throw new Error("Inventory cannot go below 0.");
       }
 
-      const { error } = await supabase
-        .from("ingredient")
-        .update({ quantity_on_hand: newQty })
-        .eq("ingredient_id", selectedIngredient.ingredient_id);
+      const { error } = await supabase.rpc("adjust_ingredient_quantity", {
+        p_ingredient_id: selectedIngredient.ingredient_id,
+        p_new_quantity: newQty,
+      });
 
       if (error) throw error;
 
@@ -140,14 +144,17 @@ export default function Inventory() {
   }
 
   return (
-    <div className="inventory-page">
+    <div className="order-history inventory-page">
       <div className="inv-header">
         <h2>Inventory Management</h2>
         <p>Track ingredient stock and make quick inventory adjustments.</p>
       </div>
 
       <div className="inv-top-actions">
-        <button className="inv-open-btn" onClick={openModal}>
+        <button
+          className="inv-open-btn"
+          onClick={openModal}
+        >
           Adjust Inventory
         </button>
       </div>
@@ -158,7 +165,7 @@ export default function Inventory() {
         <div className="inv-loading">Loading inventory...</div>
       ) : (
         <div className="inv-table-wrap">
-          <table className="inv-table">
+          <table className="order-table inventory-table">
             <thead>
               <tr>
                 <th>Ingredient</th>
@@ -178,7 +185,7 @@ export default function Inventory() {
                 return (
                   <tr
                     key={item.ingredient_id}
-                    className={isLow ? "inv-low-row" : ""}
+                    className={isLow ? "inventory-low-row" : ""}
                   >
                     <td>{item.name}</td>
                     <td>{item.unit || "-"}</td>
@@ -186,7 +193,9 @@ export default function Inventory() {
                     <td>{reorder.toFixed(2)}</td>
                     <td>${Number(item.cost_per_unit || 0).toFixed(2)}</td>
                     <td>
-                      <span className={isLow ? "inv-status-low" : "inv-status-good"}>
+                      <span
+                        className={isLow ? "inv-status-low" : "inv-status-good"}
+                      >
                         {isLow ? "Low Stock" : "OK"}
                       </span>
                     </td>
@@ -199,22 +208,36 @@ export default function Inventory() {
       )}
 
       {showModal && (
-        <div className="inv-modal-overlay" onClick={closeModal}>
-          <div className="inv-modal" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="inventory-modal-overlay"
+          onClick={closeModal}
+        >
+          <div
+            className="inventory-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="inv-modal-top">
               <div>
                 <h3>Adjust Inventory</h3>
                 <p>Select an ingredient and increase or decrease stock.</p>
               </div>
-              <button className="inv-close-btn" onClick={closeModal}>
+              <button
+                className="dialog-close-btn inventory-close-btn"
+                onClick={closeModal}
+              >
                 ×
               </button>
             </div>
 
+            <div className="menu-dialog-divider" />
+
             {modalError && <div className="inv-error">{modalError}</div>}
             {modalSuccess && <div className="inv-success">{modalSuccess}</div>}
 
-            <form className="inv-form" onSubmit={handleAdjustInventory}>
+            <form
+              className="inv-form"
+              onSubmit={handleAdjustInventory}
+            >
               <div className="inv-section">
                 <label className="inv-label">Ingredient</label>
                 <select
@@ -224,7 +247,10 @@ export default function Inventory() {
                 >
                   <option value="">Choose an ingredient</option>
                   {ingredients.map((item) => (
-                    <option key={item.ingredient_id} value={item.ingredient_id}>
+                    <option
+                      key={item.ingredient_id}
+                      value={item.ingredient_id}
+                    >
                       {item.name}
                     </option>
                   ))}
@@ -266,7 +292,9 @@ export default function Inventory() {
                   <div className="inv-preview-row">
                     <span>Current Quantity</span>
                     <strong>
-                      {Number(selectedIngredient.quantity_on_hand || 0).toFixed(2)}{" "}
+                      {Number(selectedIngredient.quantity_on_hand || 0).toFixed(
+                        2,
+                      )}{" "}
                       {selectedIngredient.unit || ""}
                     </strong>
                   </div>

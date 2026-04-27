@@ -49,7 +49,6 @@ RETURNS TABLE(
   ORDER BY o.order_datetime DESC;
 $$ LANGUAGE sql STABLE;
 
---- to be implemented
 -- Function 4: Updates menu item fields and replaces all ingredient rows for that item
 CREATE OR REPLACE FUNCTION update_menu_item_with_ingredients(
   p_item_id integer,
@@ -93,40 +92,59 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
---1. Get all customers
-SELECT customer_id, first_name, last_name
-FROM customer
-ORDER BY first_name ASC;
+-- Function 6: Update inventory quantity
+CREATE OR REPLACE FUNCTION adjust_ingredient_quantity(
+  p_ingredient_id integer,
+  p_new_quantity numeric
+)
+RETURNS void AS $$
+BEGIN
+  UPDATE ingredient
+  SET quantity_on_hand = p_new_quantity
+  WHERE ingredient_id = p_ingredient_id;
+END;
+$$ LANGUAGE plpgsql;
 
---2. Get all menu items
-SELECT item_id, name, description, price
-FROM menu_item
-ORDER BY name ASC;
+-- Function 7: Creates an order and its items atomically
+CREATE OR REPLACE FUNCTION create_order_with_items(
+  p_customer_id integer,
+  p_order_datetime timestamp,
+  p_total numeric,
+  p_items jsonb
+)
+RETURNS integer AS $$
+DECLARE
+  v_order_id integer;
+BEGIN
+  INSERT INTO "order" (customer_id, order_datetime, total)
+  VALUES (p_customer_id, p_order_datetime, p_total)
+  RETURNING order_id INTO v_order_id;
 
---3. Get all ingredients
-SELECT ingredient_id, name, unit, quantity_on_hand, reorder_level, cost_per_unit
-FROM ingredient
-ORDER BY name ASC;
+  INSERT INTO order_item (order_id, item_id, quantity, unit_price, line_total)
+  SELECT
+    v_order_id,
+    (elem ->> 'item_id')::integer,
+    (elem ->> 'quantity')::integer,
+    (elem ->> 'unit_price')::numeric,
+    (elem ->> 'line_total')::numeric
+  FROM jsonb_array_elements(p_items) AS elem;
 
---4. Insert a new order
-INSERT INTO "order" (customer_id, order_datetime, total)
-VALUES (1, NOW(), 25.50)
-RETURNING *;
+  RETURN v_order_id;
+END;
+$$ LANGUAGE plpgsql;
 
---5. Insert order items
-INSERT INTO order_item (order_id, item_id, quantity, unit_price, line_total)
-VALUES (1, 2, 3, 8.50, 25.50);
+-- Function 8: Returns all customers with their total order count
+CREATE OR REPLACE FUNCTION get_customers_with_order_count()
+RETURNS TABLE(customer_id integer, first_name text, last_name text, order_count bigint) AS $$
+  SELECT
+    c.customer_id,
+    c.first_name,
+    c.last_name,
+    COUNT(o.order_id) AS order_count
+  FROM customer c
+  LEFT JOIN "order" o ON o.customer_id = c.customer_id
+  GROUP BY c.customer_id, c.first_name, c.last_name
+  ORDER BY c.first_name ASC;
+$$ LANGUAGE sql STABLE;
 
---6. Update inventory
-UPDATE ingredient
-SET quantity_on_hand = 50
-WHERE ingredient_id = 1;
 
---7. Low stock alert
-SELECT *
-FROM ingredient
-WHERE quantity_on_hand <= reorder_level;
-
---8. Total sales
-SELECT SUM(total) AS total_sales
-FROM "order";

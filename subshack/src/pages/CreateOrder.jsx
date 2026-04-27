@@ -33,11 +33,7 @@ export default function CreateOrder() {
       setError("");
 
       const [customersRes, menuRes] = await Promise.all([
-        supabase
-          .from("customer")
-          .select("customer_id, first_name, last_name")
-          .order("first_name", { ascending: true }),
-
+        supabase.rpc("get_customers_with_order_count"),
         supabase
           .from("menu_item")
           .select("item_id, name, description, price")
@@ -62,9 +58,7 @@ export default function CreateOrder() {
 
   function handleItemChange(index, field, value) {
     setOrderItems((prev) =>
-      prev.map((line, i) =>
-        i === index ? { ...line, [field]: value } : line
-      )
+      prev.map((line, i) => (i === index ? { ...line, [field]: value } : line)),
     );
   }
 
@@ -126,7 +120,7 @@ export default function CreateOrder() {
       }
 
       const validLines = computedLines.filter(
-        (line) => line.item_id && line.quantity > 0
+        (line) => line.item_id && line.quantity > 0,
       );
 
       if (validLines.length === 0) {
@@ -138,35 +132,19 @@ export default function CreateOrder() {
         throw new Error("One or more selected menu items are invalid.");
       }
 
-      const orderPayload = {
-        customer_id: Number(selectedCustomerId),
-        order_datetime: new Date().toISOString(),
-        total: Number(orderTotal.toFixed(2)),
-      };
+      const { error } = await supabase.rpc("create_order_with_items", {
+        p_customer_id: Number(selectedCustomerId),
+        p_order_datetime: new Date().toISOString(),
+        p_total: Number(orderTotal.toFixed(2)),
+        p_items: validLines.map((line) => ({
+          item_id: Number(line.item_id),
+          quantity: Number(line.quantity),
+          unit_price: Number(line.unitPrice.toFixed(2)),
+          line_total: Number(line.lineTotal.toFixed(2)),
+        })),
+      });
 
-      const orderInsert = await supabase
-        .from("order")
-        .insert([orderPayload])
-        .select()
-        .single();
-
-      if (orderInsert.error) throw orderInsert.error;
-
-      const newOrder = orderInsert.data;
-
-      const orderItemPayload = validLines.map((line) => ({
-        order_id: newOrder.order_id,
-        item_id: Number(line.item_id),
-        quantity: Number(line.quantity),
-        unit_price: Number(line.unitPrice.toFixed(2)),
-        line_total: Number(line.lineTotal.toFixed(2)),
-      }));
-
-      const orderItemsInsert = await supabase
-        .from("order_item")
-        .insert(orderItemPayload);
-
-      if (orderItemsInsert.error) throw orderItemsInsert.error;
+      if (error) throw error;
 
       setSuccess("Order created successfully.");
 
@@ -188,23 +166,37 @@ export default function CreateOrder() {
       </div>
 
       <div className="co-launch-wrap">
-        <button className="co-open-btn" onClick={() => setShowModal(true)}>
+        <button
+          className="co-open-btn"
+          onClick={() => setShowModal(true)}
+        >
           Open Create Order
         </button>
       </div>
 
       {showModal && (
-        <div className="co-modal-overlay" onClick={closeModal}>
-          <div className="co-modal" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="co-modal-overlay"
+          onClick={closeModal}
+        >
+          <div
+            className="co-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="co-modal-top">
               <div>
                 <h3>New Order</h3>
                 <p>Select a customer and add menu items.</p>
               </div>
-              <button className="co-close-btn" onClick={closeModal}>
+              <button
+                className="dialog-close-btn"
+                onClick={closeModal}
+              >
                 ×
               </button>
             </div>
+
+            <div className="menu-dialog-divider" />
 
             {error && <div className="co-error">{error}</div>}
             {success && <div className="co-success">{success}</div>}
@@ -212,7 +204,10 @@ export default function CreateOrder() {
             {loadingData ? (
               <div className="co-loading">Loading customers and menu...</div>
             ) : (
-              <form className="co-form" onSubmit={handleSubmit}>
+              <form
+                className="co-form"
+                onSubmit={handleSubmit}
+              >
                 <div className="co-section">
                   <h4>Customer</h4>
 
@@ -247,7 +242,10 @@ export default function CreateOrder() {
                   </div>
 
                   {computedLines.map((line, index) => (
-                    <div className="co-item-row" key={index}>
+                    <div
+                      className="co-item-row"
+                      key={index}
+                    >
                       <div className="co-item-main">
                         <div className="co-item-name">
                           <label className="co-label">Menu Item</label>
@@ -260,7 +258,10 @@ export default function CreateOrder() {
                           >
                             <option value="">Choose item</option>
                             {menuItems.map((item) => (
-                              <option key={item.item_id} value={item.item_id}>
+                              <option
+                                key={item.item_id}
+                                value={item.item_id}
+                              >
                                 {item.name} (${Number(item.price).toFixed(2)})
                               </option>
                             ))}
@@ -275,7 +276,11 @@ export default function CreateOrder() {
                             min="1"
                             value={line.quantity}
                             onChange={(e) =>
-                              handleItemChange(index, "quantity", e.target.value)
+                              handleItemChange(
+                                index,
+                                "quantity",
+                                e.target.value,
+                              )
                             }
                           />
                         </div>
