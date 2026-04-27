@@ -8,7 +8,7 @@ $$ LANGUAGE sql STABLE;
 CREATE OR REPLACE FUNCTION get_most_ordered_item()
 RETURNS TABLE(item_name text, total_quantity bigint) AS $$
   SELECT mi.name AS item_name,
-         SUM(oi.quantity) AS total_quantity
+        SUM(oi.quantity) AS total_quantity
   FROM order_item oi
   JOIN menu_item mi ON mi.item_id = oi.item_id
   GROUP BY mi.name
