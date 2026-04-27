@@ -49,6 +49,7 @@ RETURNS TABLE(
   ORDER BY o.order_datetime DESC;
 $$ LANGUAGE sql STABLE;
 
+--- to be implemented
 -- Function 4: Updates menu item fields and replaces all ingredient rows for that item
 CREATE OR REPLACE FUNCTION update_menu_item_with_ingredients(
   p_item_id integer,

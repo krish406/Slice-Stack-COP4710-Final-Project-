@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import "./tableStyle.css";
+import "./OrderHistory.css";
 
 const OrderHistory = () => {
   const [orders, setOrders] = useState([]);
@@ -24,6 +25,7 @@ const OrderHistory = () => {
             first_name: row.customer_first_name,
             last_name: row.customer_last_name,
           },
+          //this is for the items column, line total refers to total for a single order item (but multiple order items can be a part of one order)
           order_item: (row.order_items || []).map((item) => ({
             quantity: item.quantity,
             unit_price: item.unit_price,
@@ -47,7 +49,7 @@ const OrderHistory = () => {
 
       // Aggregate SELECT 2: PostgreSQL GROUP BY + SUM + ORDER BY + LIMIT via RPC
       const { data: itemData, error: itemError } = await supabase.rpc(
-        "get_most_ordered_item",
+        "get_most_ordered_item"
       );
 
       if (revenueError || itemError) {
@@ -147,7 +149,7 @@ const OrderHistory = () => {
             ) : (
               <div className="stats-content">
                 <div className="stat-item">
-                  <span className="stat-label">Total Revenue</span>
+                  <span className="stat-label">Total Revenue: </span>
                   <span className="stat-value">
                     ${Number(stats.totalRevenue).toFixed(2)}
                   </span>
@@ -156,8 +158,8 @@ const OrderHistory = () => {
                 <div className="menu-dialog-divider" />
 
                 <div className="stat-item">
-                  <span className="stat-label">Most Ordered Item</span>
-                  <span className="stat-value">{stats.mostOrdered.name}</span>
+                  <span className="stat-label">Most Ordered Item: </span>
+                  <span className="stat-value">{stats.mostOrdered.name}, </span>
                   <span className="stat-subvalue">
                     ordered {stats.mostOrdered.count} time
                     {stats.mostOrdered.count !== 1 ? "s" : ""}
