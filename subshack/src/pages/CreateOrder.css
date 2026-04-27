@@ -288,3 +288,14 @@
     width: 100%;
   }
 }
+
+.co-close-btn{
+  padding: 8px 20px;
+  background: #1f5a3b;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
