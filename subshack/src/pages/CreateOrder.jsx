@@ -132,16 +132,34 @@ export default function CreateOrder() {
         throw new Error("One or more selected menu items are invalid.");
       }
 
+      const itemsPayload = validLines.map((line) => ({
+        item_id: Number(line.item_id),
+        quantity: Number(line.quantity),
+        unit_price: Number(line.unitPrice.toFixed(2)),
+        line_total: Number(line.lineTotal.toFixed(2)),
+      }));
+
+      // Check feasibility first for friendly error messages
+      const { data: shortfalls, error: feasibilityError } = await supabase.rpc(
+        "check_order_feasibility",
+        { p_items: itemsPayload },
+      );
+
+      if (feasibilityError) throw feasibilityError;
+
+      if (shortfalls && shortfalls.length > 0) {
+        const shortfallMsg = shortfalls
+          .map((s) => `${s.ingredient_name} (need ${s.required}, have ${s.available})`)
+          .join(", ");
+        throw new Error(`Insufficient stock: ${shortfallMsg}`);
+      }
+
+      // Create order atomically
       const { error } = await supabase.rpc("create_order_with_items", {
         p_customer_id: Number(selectedCustomerId),
         p_order_datetime: new Date().toISOString(),
         p_total: Number(orderTotal.toFixed(2)),
-        p_items: validLines.map((line) => ({
-          item_id: Number(line.item_id),
-          quantity: Number(line.quantity),
-          unit_price: Number(line.unitPrice.toFixed(2)),
-          line_total: Number(line.lineTotal.toFixed(2)),
-        })),
+        p_items: itemsPayload,
       });
 
       if (error) throw error;
