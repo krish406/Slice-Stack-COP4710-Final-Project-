@@ -6,6 +6,7 @@ import Inventory from "./pages/Inventory";
 import MenuManagement from "./pages/MenuManagement";
 import OrderHistory from "./pages/OrderHistory";
 
+/* hello reader this comment is here to update the repo for a github push so I can deploy :D */
 function App() {
   return (
     <div>
